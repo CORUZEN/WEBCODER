@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 return [
 
     'default' => env('DB_CONNECTION', 'mysql'),
@@ -59,7 +61,7 @@ return [
             'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
-            'prefix_indexes' => true',
+            'prefix_indexes' => true,
         ],
 
     ],

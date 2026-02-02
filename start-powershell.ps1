@@ -4,20 +4,50 @@ Write-Host "  IAGUS - Iniciando Servidor Local" -ForegroundColor Cyan
 Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Verificar se o PHP está disponível
-Write-Host "Verificando PHP..." -ForegroundColor Yellow
-$phpVersion = php -v 2>$null
-if ($LASTEXITCODE -ne 0) {
+# Detectar PHP automaticamente
+Write-Host "Procurando PHP..." -ForegroundColor Yellow
+
+$phpPaths = @(
+    "C:\Users\$env:USERNAME\.config\herd\bin\php.exe",
+    "C:\laragon\bin\php\php-8.3.0\php.exe",
+    "C:\laragon\bin\php\php-8.2.12\php.exe",
+    "C:\laragon\bin\php\php-8.2.0\php.exe",
+    "C:\xampp\php\php.exe",
+    "C:\wamp64\bin\php\php8.3.0\php.exe",
+    "C:\wamp64\bin\php\php8.2.0\php.exe"
+)
+
+$phpCmd = $null
+
+# Primeiro tenta encontrar no PATH
+$phpInPath = Get-Command php -ErrorAction SilentlyContinue
+if ($phpInPath) {
+    $phpCmd = "php"
+    Write-Host "PHP encontrado no PATH!" -ForegroundColor Green
+} else {
+    # Procurar em locais comuns
+    foreach ($path in $phpPaths) {
+        if (Test-Path $path) {
+            $phpCmd = $path
+            Write-Host "PHP encontrado: $path" -ForegroundColor Green
+            break
+        }
+    }
+}
+
+if (-not $phpCmd) {
     Write-Host "PHP nao encontrado!" -ForegroundColor Red
     Write-Host ""
-    Write-Host "Verifique se o Laravel Herd foi instalado corretamente:" -ForegroundColor Yellow
-    Write-Host "  1. Abra o aplicativo Herd" -ForegroundColor White
-    Write-Host "  2. Verifique se esta rodando" -ForegroundColor White
-    Write-Host "  3. Reinicie o computador se necessario" -ForegroundColor White
+    Write-Host "Instale uma das opcoes:" -ForegroundColor Yellow
+    Write-Host "  1. Laravel Herd: https://herd.laravel.com/windows" -ForegroundColor White
+    Write-Host "  2. Laragon: https://laragon.org/download/" -ForegroundColor White
+    Write-Host "  3. XAMPP: https://www.apachefriends.org/" -ForegroundColor White
     Write-Host ""
+    Write-Host "Ou adicione o PHP ao PATH do sistema." -ForegroundColor Yellow
+    Write-Host ""
+    Read-Host "Pressione Enter para sair"
     exit 1
 }
-Write-Host "PHP encontrado!" -ForegroundColor Green
 Write-Host ""
 
 # Matar processos nas portas
@@ -46,16 +76,16 @@ if (!(Test-Path "database\database.sqlite")) {
 
 # Limpar cache
 Write-Host "Limpando cache..." -ForegroundColor Yellow
-php artisan cache:clear 2>$null
-php artisan config:clear 2>$null
-php artisan route:clear 2>$null
-php artisan view:clear 2>$null
+& $phpCmd artisan cache:clear 2>$null
+& $phpCmd artisan config:clear 2>$null
+& $phpCmd artisan route:clear 2>$null
+& $phpCmd artisan view:clear 2>$null
 Write-Host "Cache limpo!" -ForegroundColor Green
 Write-Host ""
 
 # Executar migrations
 Write-Host "Configurando banco de dados..." -ForegroundColor Yellow
-php artisan migrate --seed --force 2>$null
+& $phpCmd artisan migrate --seed --force 2>$null
 if ($LASTEXITCODE -eq 0) {
     Write-Host "Banco configurado!" -ForegroundColor Green
 } else {
@@ -65,7 +95,7 @@ Write-Host ""
 
 # Iniciar Vite em background
 Write-Host "Iniciando Vite..." -ForegroundColor Yellow
-Start-Process -FilePath "npm" -ArgumentList "run", "dev" -WindowStyle Hidden
+Start-Process -FilePath "npm" -ArgumentList "run", "dev" -WindowStyle Hidden -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 2
 Write-Host "Vite iniciado!" -ForegroundColor Green
 Write-Host ""
@@ -95,4 +125,4 @@ Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Iniciar Laravel
-php artisan serve
+& $phpCmd artisan serve

@@ -9,7 +9,51 @@ echo ""
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
+
+# Verificar se Docker está disponível
+if command -v docker &> /dev/null && command -v docker-compose &> /dev/null; then
+    echo -e "${BLUE}🐳 Docker detectado! Iniciando com Docker...${NC}"
+    echo ""
+    
+    # Parar containers antigos
+    echo -e "${YELLOW}📦 Parando containers antigos...${NC}"
+    docker-compose down 2>/dev/null
+    
+    # Criar banco SQLite se não existir
+    if [ ! -f "database/database.sqlite" ]; then
+        echo -e "${YELLOW}💾 Criando banco SQLite...${NC}"
+        touch database/database.sqlite
+    fi
+    
+    # Iniciar containers
+    echo -e "${YELLOW}🚀 Iniciando containers...${NC}"
+    docker-compose up -d
+    
+    echo ""
+    echo -e "${GREEN}==========================================${NC}"
+    echo -e "${GREEN}  ✅ SERVIDOR RODANDO COM DOCKER!${NC}"
+    echo -e "${GREEN}==========================================${NC}"
+    echo ""
+    echo -e "${BLUE}📱 Aplicação:${NC} http://localhost:8000"
+    echo -e "${BLUE}🎨 Vite HMR:${NC}  http://localhost:5173"
+    echo ""
+    echo -e "${YELLOW}👤 Admin:${NC} admin@iagus.org.br / iagus2026"
+    echo -e "${YELLOW}👤 User:${NC}  joao@example.com / password"
+    echo ""
+    echo -e "${GREEN}==========================================${NC}"
+    echo ""
+    echo -e "${BLUE}📊 Ver logs:${NC}       docker-compose logs -f"
+    echo -e "${BLUE}🛑 Parar servidor:${NC} docker-compose down"
+    echo ""
+    
+    exit 0
+fi
+
+# Se Docker não está disponível, usar método tradicional
+echo -e "${YELLOW}⚠️  Docker não encontrado. Usando modo tradicional...${NC}"
+echo ""
 
 # Detectar PHP no Windows (Git Bash)
 PHP_CMD="php"
@@ -46,14 +90,18 @@ if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
         echo -e "${GREEN}✓ PHP encontrado: $PHP_PATH${NC}"
     else
         echo -e "${RED}✗ PHP não encontrado!${NC}"
-        echo -e "${YELLOW}"
-        echo "Por favor, instale uma das opções:"
-        echo "  1. Laravel Herd: https://herd.laravel.com/windows"
-        echo "  2. Laragon: https://laragon.org/download/"
-        echo "  3. XAMPP: https://www.apachefriends.org/"
         echo ""
-        echo "Ou adicione o PHP ao PATH do sistema."
-        echo -e "${NC}"
+        echo -e "${BLUE}💡 SOLUÇÃO MAIS FÁCIL: Use Docker!${NC}"
+        echo ""
+        echo "1. Instale Docker Desktop:"
+        echo "   https://www.docker.com/products/docker-desktop"
+        echo ""
+        echo "2. Execute este script novamente"
+        echo ""
+        echo -e "${YELLOW}Ou instale PHP manualmente:${NC}"
+        echo "  - Laravel Herd: https://herd.laravel.com/windows"
+        echo "  - Laragon: https://laragon.org/download/"
+        echo ""
         exit 1
     fi
     echo ""

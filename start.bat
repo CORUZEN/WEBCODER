@@ -1,8 +1,18 @@
 @echo off
 echo ==========================================
-echo 🚀 IAGUS - Iniciando Servidor Local
+echo  IAGUS - Iniciando Servidor
 echo ==========================================
 echo.
+echo Executando via PowerShell...
+echo.
+
+powershell.exe -ExecutionPolicy Bypass -File "%~dp0start-powershell.ps1"
+
+if errorlevel 1 (
+    echo.
+    echo Erro ao executar. Pressione qualquer tecla para sair.
+    pause >nul
+)
 
 REM Verificar e matar processos na porta 8000 (Laravel)
 echo 📡 Verificando porta 8000...
