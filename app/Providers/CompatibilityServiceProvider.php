@@ -17,6 +17,7 @@ class CompatibilityServiceProvider extends ServiceProvider
         $this->registerCookie();
         $this->registerSession();
         $this->registerUrl();
+        $this->registerTranslator();
     }
 
     protected function registerFilesystem()
@@ -149,6 +150,19 @@ class CompatibilityServiceProvider extends ServiceProvider
                 $app['config']['app.asset_url']
             );
         });
+    }
+
+    protected function registerTranslator()
+    {
+        $this->app->singleton('translator', function ($app) {
+            $loader = new \Illuminate\Translation\FileLoader($app['files'], $app['path.lang']);
+            $locale = $app['config']['app.locale'];
+            $trans = new \Illuminate\Translation\Translator($loader, $locale);
+            $trans->setFallback($app['config']['app.fallback_locale']);
+            return $trans;
+        });
+        
+        $this->app->alias('translator', \Illuminate\Contracts\Translation\Translator::class);
     }
 
     public function boot()
