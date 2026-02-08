@@ -33,6 +33,16 @@
         @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent;
     }
     
+    /* Classes de formulário sem conflitos CSS */
+    .form-input {
+        @apply w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+        border-color: rgb(209 213 219);
+    }
+    
+    .form-input.error {
+        @apply border-red-500;
+    }
+    
     .label {
         @apply block text-sm font-medium text-gray-700 mb-2;
     }

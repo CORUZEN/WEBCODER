@@ -1,8 +1,19 @@
 # 🚀 Guia Rápido de Início
 
+## ⚠️ ANTES DE COMEÇAR
+
+**Você tem PHP instalado?**
+- Se **NÃO** → Veja: [INSTALAR_PHP_WINDOWS.md](INSTALAR_PHP_WINDOWS.md)
+- Se **SIM** → Continue abaixo!
+
 ## Iniciar o Servidor
 
 ### Windows
+```bash
+start-simples.bat
+```
+
+Ou se tiver Docker:
 ```bash
 start.bat
 ```

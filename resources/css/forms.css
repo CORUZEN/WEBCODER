@@ -1,0 +1,31 @@
+/* Estilos customizados para formulários do IAGUS */
+
+/* Input com validação - elimina avisos do Tailwind CSS */
+.form-input {
+    @apply w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    border-color: rgb(209 213 219); /* gray-300 */
+}
+
+.form-input.error {
+    @apply border-red-500;
+}
+
+/* Textarea com validação */
+.form-textarea {
+    @apply w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    border-color: rgb(209 213 219); /* gray-300 */
+}
+
+.form-textarea.error {
+    @apply border-red-500;
+}
+
+/* Select com validação */
+.form-select {
+    @apply w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    border-color: rgb(209 213 219); /* gray-300 */
+}
+
+.form-select.error {
+    @apply border-red-500;
+}

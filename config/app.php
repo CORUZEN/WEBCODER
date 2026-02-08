@@ -28,12 +28,4 @@ return [
         'driver' => 'file',
     ],
 
-    'providers' => [
-        // ...
-    ],
-
-    'aliases' => [
-        // ...
-    ],
-
 ];
