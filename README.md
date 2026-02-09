@@ -8,56 +8,51 @@
 
 ---
 
-## 🚀 Início Rápido (3 minutos!)
+## 🚀 Início Rápido
 
-### 1️⃣ Instalar Dependências (já está pronto!)
+### Desenvolvedor Experiente? 
+👉 **[QUICK_START.md](QUICK_START.md)** - Setup em 60 segundos
 
-As dependências já foram instaladas! ✅
+### Método Recomendado: Laravel Herd
 
-### 2️⃣ Configurar Banco de Dados
-
-Ver instruções detalhadas em: **[DATABASE_SETUP.md](DATABASE_SETUP.md)**
-
-Resumo rápido:
 ```bash
-# Criar banco no MySQL
-mysql -u root -p
-CREATE DATABASE iagus_site CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-EXIT;
+# 1. Instalar Herd: https://herd.laravel.com/windows
+# 2. Setup
+herd link webcoder
+npm install && npm run build
+touch database/database.sqlite
+php artisan migrate:fresh --seed
 
-# Executar migrations
-php artisan migrate --seed
+# 3. Acessar: http://webcoder.test
 ```
-
-### 3️⃣ Iniciar o Servidor
-
-**Windows:**
-```bash
-start.bat
-```
-
-**Linux/Mac:**
-```bash
-chmod +x start.sh
-./start.sh
-```
-
-### 4️⃣ Acessar a Aplicação
-
-🌐 **Aplicação:** http://localhost:8000
 
 👤 **Admin:** admin@iagus.org.br / iagus2026  
 👤 **User:** joao@example.com / password
+
+### Método Alternativo
+
+Ver instruções completas: **[INSTRUCOES_INICIAR.md](INSTRUCOES_INICIAR.md)**
 
 ---
 
 ## 📚 Documentação Completa
 
-- 📖 **[START_HERE.md](START_HERE.md)** - Guia rápido de início
-- 🗄️ **[DATABASE_SETUP.md](DATABASE_SETUP.md)** - Configuração do banco
-- 💾 **[INSTALACAO.md](INSTALACAO.md)** - Instalação detalhada
-- 🚀 **[docs/DEPLOY_HOSTGATOR.md](docs/DEPLOY_HOSTGATOR.md)** - Deploy em produção
-- ✅ **[PROJETO_CONCLUIDO.md](PROJETO_CONCLUIDO.md)** - Resumo do projeto
+### 🎯 Início Rápido
+- ⚡ **[QUICK_START.md](QUICK_START.md)** - Setup em 60 segundos (dev experiente)
+- 🚀 **[INSTRUCOES_INICIAR.md](INSTRUCOES_INICIAR.md)** - Como iniciar servidor
+- 📖 **[START_HERE.md](START_HERE.md)** - Guia passo a passo detalhado
+
+### 🔧 Configuração e Instalação
+- 🗄️ **[DATABASE_SETUP.md](DATABASE_SETUP.md)** - Configuração do banco de dados
+- 💾 **[INSTALACAO.md](INSTALACAO.md)** - Instalação completa do zero
+
+### 🛠️ Desenvolvimento
+- 📝 **[CHANGELOG.md](CHANGELOG.md)** - Histórico de mudanças e melhorias
+- 🔧 **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Solução de problemas comuns
+- ✅ **[PROJETO_CONCLUIDO.md](PROJETO_CONCLUIDO.md)** - Status e funcionalidades
+
+### 🚀 Deploy
+- 🌐 **[docs/DEPLOY_HOSTGATOR.md](docs/DEPLOY_HOSTGATOR.md)** - Deploy em produção
 
 ---
 
