@@ -326,41 +326,55 @@
 </section>
 
 <!-- Juventude -->
-<section id="juventude" class="py-20 bg-white">
+<section id="juventude" class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-gradient-to-r from-secondary-500 to-secondary-700 rounded-3xl overflow-hidden">
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
             <div class="grid grid-cols-1 lg:grid-cols-2">
-                <div class="p-12 lg:p-16 text-white">
-                    <span class="text-secondary-200 font-semibold tracking-wider uppercase">Jovens</span>
-                    <h2 class="text-4xl font-bold mt-2 mb-6">Juventude IAGUS</h2>
-                    <p class="text-xl text-secondary-100 mb-8">
+                <!-- Conteúdo Principal -->
+                <div class="p-10 lg:p-14">
+                    <span class="inline-block px-4 py-1.5 bg-primary-100 text-primary-700 font-semibold text-sm tracking-wider uppercase rounded-full mb-4">Jovens</span>
+                    <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Juventude IAGUS</h2>
+                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
                         "Um lugar seguro para pertencer, crescer e servir."
                     </p>
                     
+                    <!-- Cards de Atividades -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
-                            <h4 class="font-bold mb-1">👥 Grupos Pequenos</h4>
-                            <p class="text-sm text-secondary-200">Estudo e comunhão</p>
+                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-xl">👥</span>
+                                <h4 class="font-bold text-gray-900">Grupos Pequenos</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Estudo e comunhão</p>
                         </div>
-                        <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
-                            <h4 class="font-bold mb-1">🎯 Discipulado</h4>
-                            <p class="text-sm text-secondary-200">Mentoria espiritual</p>
+                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-xl">🎯</span>
+                                <h4 class="font-bold text-gray-900">Discipulado</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Mentoria espiritual</p>
                         </div>
-                        <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
-                            <h4 class="font-bold mb-1">🙌 Ministérios</h4>
-                            <p class="text-sm text-secondary-200">Oportunidades de servir</p>
+                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-xl">🙌</span>
+                                <h4 class="font-bold text-gray-900">Ministérios</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Oportunidades de servir</p>
                         </div>
-                        <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
-                            <h4 class="font-bold mb-1">🏕️ Eventos</h4>
-                            <p class="text-sm text-secondary-200">Retiros e atividades</p>
+                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-xl">🏕️</span>
+                                <h4 class="font-bold text-gray-900">Eventos</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Retiros e atividades</p>
                         </div>
                     </div>
                     
-                    <p class="text-secondary-200 mb-6">
+                    <p class="text-gray-600 mb-6 leading-relaxed">
                         Se você está recomeçando, buscando fé ou só quer conversar: você é bem-vindo!
                     </p>
                     
-                    <a href="#contato" class="btn bg-white text-secondary-600 hover:bg-gray-100 inline-flex items-center gap-2">
+                    <a href="#contato" class="btn bg-primary-600 text-white hover:bg-primary-700 inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors">
                         Falar com a juventude
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
@@ -368,17 +382,18 @@
                     </a>
                 </div>
                 
-                <div class="relative hidden lg:block">
-                    <div class="absolute inset-0 bg-gradient-to-l from-transparent to-secondary-700/50"></div>
-                    <div class="h-full flex items-center justify-center p-16">
-                        <div class="text-center">
-                            <div class="w-48 h-48 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur">
-                                <svg class="w-24 h-24 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Painel Lateral -->
+                <div class="relative bg-gradient-to-br from-primary-600 to-primary-800 hidden lg:block">
+                    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent"></div>
+                    <div class="h-full flex items-center justify-center p-14">
+                        <div class="text-center text-white">
+                            <div class="w-40 h-40 bg-white/15 rounded-full flex items-center justify-center mx-auto mb-8 backdrop-blur-sm border border-white/20">
+                                <svg class="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
                             </div>
-                            <p class="text-2xl font-bold text-white">Sextas - 19:30h</p>
-                            <p class="text-secondary-200">Encontro semanal</p>
+                            <p class="text-3xl font-bold mb-2">Sextas - 19:30h</p>
+                            <p class="text-primary-200 text-lg">Encontro semanal</p>
                         </div>
                     </div>
                 </div>
