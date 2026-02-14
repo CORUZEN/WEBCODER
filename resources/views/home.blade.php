@@ -5,43 +5,30 @@
 @section('content')
 
 <!-- Hero Section - Início -->
-<section id="inicio" class="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white overflow-hidden">
-    <!-- Background - Animated Floating Particles (GPU Optimized) -->
+<section id="inicio" class="relative min-h-screen flex items-center justify-center bg-primary-700 text-white overflow-hidden">
+    <!-- Background - Elegant Aurora Effect -->
     <div class="absolute inset-0">
-        <!-- Floating particles container -->
-        <div class="particles-container absolute inset-0 overflow-hidden">
-            <!-- Particle 1 -->
-            <div class="particle" style="--x: 10%; --y: 20%; --size: 8px; --delay: 0s; --duration: 25s;"></div>
-            <!-- Particle 2 -->
-            <div class="particle" style="--x: 20%; --y: 60%; --size: 6px; --delay: 2s; --duration: 30s;"></div>
-            <!-- Particle 3 -->
-            <div class="particle" style="--x: 30%; --y: 40%; --size: 10px; --delay: 4s; --duration: 28s;"></div>
-            <!-- Particle 4 -->
-            <div class="particle" style="--x: 50%; --y: 10%; --size: 5px; --delay: 1s; --duration: 35s;"></div>
-            <!-- Particle 5 -->
-            <div class="particle" style="--x: 60%; --y: 70%; --size: 7px; --delay: 3s; --duration: 32s;"></div>
-            <!-- Particle 6 -->
-            <div class="particle" style="--x: 70%; --y: 30%; --size: 9px; --delay: 5s; --duration: 27s;"></div>
-            <!-- Particle 7 -->
-            <div class="particle" style="--x: 80%; --y: 50%; --size: 6px; --delay: 2.5s; --duration: 33s;"></div>
-            <!-- Particle 8 -->
-            <div class="particle" style="--x: 90%; --y: 80%; --size: 8px; --delay: 4.5s; --duration: 29s;"></div>
-            <!-- Particle 9 -->
-            <div class="particle" style="--x: 15%; --y: 85%; --size: 5px; --delay: 1.5s; --duration: 31s;"></div>
-            <!-- Particle 10 -->
-            <div class="particle" style="--x: 40%; --y: 25%; --size: 7px; --delay: 6s; --duration: 26s;"></div>
-            <!-- Particle 11 -->
-            <div class="particle" style="--x: 85%; --y: 15%; --size: 6px; --delay: 3.5s; --duration: 34s;"></div>
-            <!-- Particle 12 -->
-            <div class="particle" style="--x: 5%; --y: 45%; --size: 8px; --delay: 0.5s; --duration: 28s;"></div>
-        </div>
+        <!-- Base gradient -->
+        <div class="absolute inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800"></div>
         
-        <!-- Subtle gradient overlays -->
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(255,255,255,0.08),transparent)]"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_80%_80%,rgba(255,255,255,0.05),transparent)]"></div>
+        <!-- Aurora light effect 1 -->
+        <div class="absolute top-0 left-1/4 w-1/2 h-full bg-gradient-to-b from-cyan-300/20 via-primary-400/10 to-transparent blur-3xl"></div>
+        
+        <!-- Aurora light effect 2 -->
+        <div class="absolute top-1/3 right-0 w-1/3 h-2/3 bg-gradient-to-l from-sky-300/15 via-primary-500/10 to-transparent blur-3xl"></div>
+        
+        <!-- Aurora light effect 3 -->
+        <div class="absolute bottom-0 left-0 w-2/3 h-1/2 bg-gradient-to-tr from-primary-400/20 via-primary-600/10 to-transparent blur-3xl"></div>
+        
+        <!-- Elegant spotlight top -->
+        <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-white/10 to-transparent rounded-full blur-3xl"></div>
+        
+        <!-- Subtle glow orbs -->
+        <div class="absolute top-1/4 left-1/6 w-64 h-64 bg-primary-400/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-1/4 right-1/6 w-80 h-80 bg-primary-500/15 rounded-full blur-3xl"></div>
     </div>
     
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 flex flex-col justify-center min-h-screen">
         <div class="animate-fade-in">
             <p class="text-lg md:text-xl mb-4 text-primary-100 tracking-wider uppercase">Bem-vindo à</p>
             <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
@@ -59,15 +46,15 @@
                 </a>
             </div>
         </div>
-        
-        <!-- Scroll indicator -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <a href="#conheca" class="text-white/70 hover:text-white transition">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                </svg>
-            </a>
-        </div>
+    </div>
+    
+    <!-- Scroll indicator - positioned at bottom of section -->
+    <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
+        <a href="#conheca" class="text-white/60 hover:text-white transition-colors p-2 block">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </a>
     </div>
 </section>
 
