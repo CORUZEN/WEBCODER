@@ -21,7 +21,30 @@ echo "<style>pre{background:#1f2937;color:#f3f4f6;padding:15px;border-radius:8px
 
 echo "<h1>Diagnóstico IAGUS - " . date('d/m/Y H:i:s') . "</h1>";
 
-// Composer e PHP
+// Diretório raiz
+echo "<h2>Estrutura de diretórios do servidor</h2><pre>";
+$root = '/home1/abdonc73/iagus.com.br';
+$dirs = ['vendor', 'vendor/laravel', 'public/build', 'bootstrap/cache', 'storage'];
+foreach ($dirs as $d) {
+    $full = "$root/$d";
+    $exists = file_exists($full);
+    $count = $exists && is_dir($full) ? count(glob("$full/*")) : 0;
+    echo str_pad($d, 30) . ($exists ? "✅ EXISTS ($count items)" : "❌ MISSING") . "\n";
+}
+// Verificar vendor/autoload.php especificamente
+echo "\nvendor/autoload.php: " . (file_exists("$root/vendor/autoload.php") ? "✅ EXISTS" : "❌ MISSING") . "\n";
+// Listar repositórios disponíveis
+echo "\n=== Repositórios cPanel ===\n";
+$repoBase = '/home1/abdonc73/repositories';
+if (is_dir($repoBase)) {
+    foreach (glob("$repoBase/*") as $repo) {
+        $hasVendor = file_exists("$repo/vendor/autoload.php");
+        echo basename($repo) . " → vendor/autoload.php: " . ($hasVendor ? "✅" : "❌") . "\n";
+    }
+}
+echo "</pre>";
+
+// Compiler e PHP
 echo "<h2>PHP e Composer</h2><table>";
 echo "<tr><td>PHP versão</td><td>" . PHP_VERSION . "</td></tr>";
 $phpPaths = ['/usr/local/bin/php', '/usr/bin/php', '/opt/cpanel/ea-php84/root/usr/bin/php', '/opt/cpanel/ea-php83/root/usr/bin/php'];
