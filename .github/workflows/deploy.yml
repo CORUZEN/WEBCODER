@@ -18,6 +18,8 @@ jobs:
     steps:
     - name: 🚚 Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
 
     - name: 📦 Setup Node.js
       uses: actions/setup-node@v4
@@ -30,26 +32,47 @@ jobs:
         npm ci
         npm run build
 
-    - name: 📂 Deploy via SFTP com lftp (porta 2222)
+    - name: 📂 Deploy apenas arquivos alterados via SFTP (porta 2222)
+      env:
+        FTP_USER: ${{ secrets.FTP_USERNAME }}
+        FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+        FTP_HOST: ${{ secrets.FTP_SERVER }}
+        REMOTE: ${{ secrets.REMOTE_PATH }}
       run: |
-        sudo apt-get install -y lftp
-        lftp -u "${{ secrets.FTP_USERNAME }}","${{ secrets.FTP_PASSWORD }}" sftp://${{ secrets.FTP_SERVER }}:2222 <<'LFTP'
-        set sftp:auto-confirm yes
-        set net:timeout 30
-        set net:max-retries 3
-        mirror --reverse --verbose \
-          --exclude-glob .git/ \
-          --exclude-glob .github/ \
-          --exclude-glob node_modules/ \
-          --exclude-glob .env \
-          --exclude-glob .env-HOSTGATOR \
-          --exclude-glob .env-production \
-          --exclude-glob storage/logs/ \
-          --exclude-glob storage/framework/cache/ \
-          --exclude-glob storage/framework/sessions/ \
-          --exclude-glob storage/framework/views/ \
-          ./ ${{ secrets.REMOTE_PATH }}/
-        LFTP
+        sudo apt-get install -y lftp -qq
+
+        # Arquivos alterados no último commit (excluindo pastas sensíveis)
+        git diff --name-only HEAD~1 HEAD | grep -vE '^(\.git|\.github|node_modules|\.env|storage/logs|storage/framework/(cache|sessions|views))' > /tmp/changed_files.txt
+
+        # Se assets foram alterados, incluir public/build
+        if git diff --name-only HEAD~1 HEAD | grep -qE '^(resources/|vite\.config|tailwind|package\.)'; then
+          find public/build -type f >> /tmp/changed_files.txt
+        fi
+
+        if [ ! -s /tmp/changed_files.txt ]; then
+          echo "✅ Nenhum arquivo alterado. Deploy ignorado."
+          exit 0
+        fi
+
+        echo "📦 Arquivos para deploy:"
+        cat /tmp/changed_files.txt
+
+        # Gerar comandos lftp
+        echo "set sftp:auto-confirm yes" > /tmp/lftp_cmds.txt
+        echo "set net:timeout 30" >> /tmp/lftp_cmds.txt
+        echo "open -u \"$FTP_USER\",\"$FTP_PASS\" sftp://$FTP_HOST:2222" >> /tmp/lftp_cmds.txt
+
+        while IFS= read -r file; do
+          [ -f "$file" ] || continue
+          dir=$(dirname "$file")
+          echo "mkdir -p $REMOTE/$dir" >> /tmp/lftp_cmds.txt
+          echo "put $file -o $REMOTE/$file" >> /tmp/lftp_cmds.txt
+        done < /tmp/changed_files.txt
+
+        echo "bye" >> /tmp/lftp_cmds.txt
+
+        lftp -f /tmp/lftp_cmds.txt
+        echo "✅ Deploy concluído!"
 
     - name: 🚀 Pós-deploy via SSH (composer, migrate, optimize)
       uses: appleboy/ssh-action@v1.0.3
