@@ -1,6 +1,7 @@
 /.phpunit.cache
 /node_modules
 # public/build NÃO está aqui — assets compilados devem ir para o git (HostGator)
+# vendor/ NÃO está aqui — vendor compilado vai para o git via GitHub Actions
 /public/hot
 /public/storage
 /storage/*.key
@@ -8,7 +9,6 @@
 /storage/framework/views/*
 /storage/framework/cache/*
 /storage/logs/*
-/vendor
 .env
 .env.backup
 .env.production

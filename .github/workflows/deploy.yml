@@ -18,8 +18,23 @@ jobs:
     - name: 🚚 Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 2
         token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🐘 Setup PHP 8.3
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, xml, ctype, json, tokenizer, pdo, pdo_mysql, curl, openssl, bcmath, zip
+
+    - name: 💾 Cache do vendor/
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: composer-${{ hashFiles('composer.lock') }}
+        restore-keys: composer-
+
+    - name: 📦 Instalar dependências PHP
+      run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
     - name: 📦 Setup Node.js
       uses: actions/setup-node@v4
@@ -32,15 +47,15 @@ jobs:
         npm ci
         npm run build
 
-    - name: 📤 Commit assets compilados ao repositório
+    - name: 📤 Commit vendor/ e assets no repositório
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git add public/build/
-        git diff --staged --quiet || git commit -m "chore: compilar assets [skip ci]"
+        git add vendor/ public/build/
+        git diff --staged --quiet || git commit -m "chore: vendor e assets compilados [skip ci]"
         git push origin HEAD:main || true
 
-    - name: 🚀 Deploy via API cPanel (pull + .cpanel.yml)
+    - name: 🚀 Deploy via API cPanel
       env:
         CPANEL_USER: ${{ secrets.FTP_USERNAME }}
         CPANEL_PASS: ${{ secrets.FTP_PASSWORD }}
@@ -52,10 +67,7 @@ jobs:
         echo "Resposta: $RESPONSE"
         if echo "$RESPONSE" | grep -q '"status":0'; then
           echo "❌ Erro no deploy cPanel"
-          echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); [print(e) for e in d.get('errors',[])]" || true
           exit 1
         fi
-        echo "✅ Deploy disparado com sucesso!"
-        echo "O cPanel está rodando: composer install + migrate + optimize"
-        echo "Acompanhe em: https://$CPANEL_HOST:2083 → Git → Implementações"
+        echo "✅ Deploy disparado — cPanel irá puxar repo (com vendor/) e rodar artisan"
 
