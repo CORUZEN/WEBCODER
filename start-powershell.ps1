@@ -8,11 +8,18 @@ Write-Host ""
 Write-Host "Procurando PHP..." -ForegroundColor Yellow
 
 $phpPaths = @(
+    "C:\Users\$env:USERNAME\.config\herd\bin\php84\php.exe",
+    "C:\Users\$env:USERNAME\.config\herd\bin\php83\php.exe",
+    "C:\Users\$env:USERNAME\.config\herd\bin\php82\php.exe",
     "C:\Users\$env:USERNAME\.config\herd\bin\php.exe",
+    "C:\Users\$env:USERNAME\AppData\Local\Herd\bin\php84\php.exe",
+    "C:\Users\$env:USERNAME\AppData\Local\Herd\bin\php.exe",
+    "C:\laragon\bin\php\php-8.4.0\php.exe",
     "C:\laragon\bin\php\php-8.3.0\php.exe",
     "C:\laragon\bin\php\php-8.2.12\php.exe",
     "C:\laragon\bin\php\php-8.2.0\php.exe",
     "C:\xampp\php\php.exe",
+    "C:\wamp64\bin\php\php8.4.0\php.exe",
     "C:\wamp64\bin\php\php8.3.0\php.exe",
     "C:\wamp64\bin\php\php8.2.0\php.exe"
 )
@@ -117,11 +124,31 @@ if ($LASTEXITCODE -eq 0) {
 }
 Write-Host ""
 
+# Remover public/hot antigo antes de iniciar
+if (Test-Path "public\hot") { Remove-Item "public\hot" -Force }
+
+# Matar processos Node antigos (Vite)
+Get-Process -Name "node" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+
 # Iniciar Vite em background
 Write-Host "Iniciando Vite..." -ForegroundColor Yellow
 Start-Process -FilePath "npm" -ArgumentList "run", "dev" -WindowStyle Hidden -ErrorAction SilentlyContinue
-Start-Sleep -Seconds 2
-Write-Host "Vite iniciado!" -ForegroundColor Green
+
+# Aguardar Vite criar public/hot (confirma que esta pronto)
+$viteTimeout = 30
+$viteElapsed = 0
+Write-Host "Aguardando Vite iniciar" -NoNewline -ForegroundColor Yellow
+while (!(Test-Path "public\hot") -and $viteElapsed -lt $viteTimeout) {
+    Start-Sleep -Seconds 1
+    $viteElapsed++
+    Write-Host "." -NoNewline -ForegroundColor Yellow
+}
+Write-Host "" 
+if (Test-Path "public\hot") {
+    Write-Host "Vite iniciado e pronto!" -ForegroundColor Green
+} else {
+    Write-Host "Vite demorou muito - continuando sem HMR" -ForegroundColor Red
+}
 Write-Host ""
 
 # Mensagens finais
@@ -148,5 +175,15 @@ Write-Host "Pressione Ctrl+C para parar o servidor" -ForegroundColor Yellow
 Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
 
+# Limpar public/hot ao sair
+trap {
+    if (Test-Path "public\hot") { Remove-Item "public\hot" -Force -ErrorAction SilentlyContinue }
+    break
+}
+
 # Iniciar Laravel na porta 3001
-& $phpCmd artisan serve --port=3001
+try {
+    & $phpCmd artisan serve --port=3001
+} finally {
+    if (Test-Path "public\hot") { Remove-Item "public\hot" -Force -ErrorAction SilentlyContinue }
+}
