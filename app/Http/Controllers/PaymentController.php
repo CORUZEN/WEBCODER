@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use App\Models\Registration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\MercadoPagoConfig;
 
@@ -96,7 +97,7 @@ class PaymentController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Erro ao criar preferência Mercado Pago', [
+            Log::error('Erro ao criar preferência Mercado Pago', [
                 'registration_code' => $registration->code,
                 'error' => $e->getMessage()
             ]);

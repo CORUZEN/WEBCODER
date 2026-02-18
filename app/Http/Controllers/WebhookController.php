@@ -7,6 +7,7 @@ use App\Models\Registration;
 use App\Models\WebhookEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\MercadoPagoConfig;
 
@@ -79,7 +80,7 @@ class WebhookController extends Controller
 
             $webhookEvent->markAsProcessed();
 
-            \Log::info('Webhook processado com sucesso', [
+            Log::info('Webhook processado com sucesso', [
                 'payment_id' => $paymentId,
                 'registration_code' => $externalReference,
                 'status' => $mpPayment->status,
@@ -90,7 +91,7 @@ class WebhookController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             
-            \Log::error('Erro ao processar webhook', [
+            Log::error('Erro ao processar webhook', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -129,7 +130,7 @@ class WebhookController extends Controller
 
             // TODO: Enviar e-mail quando status mudar para 'paid'
             if ($newStatus === 'paid') {
-                \Log::info('Pagamento confirmado - enviar e-mail', [
+                Log::info('Pagamento confirmado - enviar e-mail', [
                     'registration_code' => $registration->code,
                     'user_email' => $registration->user->email,
                 ]);

@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RegistrationController extends Controller
 {
@@ -53,7 +54,7 @@ class RegistrationController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             
-            \Log::error('Erro ao criar inscrição', [
+            Log::error('Erro ao criar inscrição', [
                 'event_id' => $event->id,
                 'user_id' => auth()->id(),
                 'error' => $e->getMessage()
