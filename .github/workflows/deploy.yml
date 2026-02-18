@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
 
 # Secrets necessários (apenas 4):
-#   HOST        → 69.6.249.117
-#   USERNAME    → abdonc73
-#   PASSWORD    → senha principal do cPanel
-#   REMOTE_PATH → /home1/abdonc73/iagus.com.br
+#   FTP_SERVER   → 69.6.249.117
+#   FTP_USERNAME → abdonc73
+#   FTP_PASSWORD → senha principal do cPanel
+#   REMOTE_PATH  → /home1/abdonc73/iagus.com.br
 
 jobs:
   deploy:
@@ -33,9 +33,9 @@ jobs:
     - name: 📂 Deploy via SFTP (porta 2222)
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
-        server: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
         port: 2222
         local_path: './*'
         remote_path: ${{ secrets.REMOTE_PATH }}
@@ -47,9 +47,9 @@ jobs:
     - name: 🚀 Pós-deploy via SSH (composer, migrate, optimize)
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        host: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
         port: 2222
         script: |
           cd ${{ secrets.REMOTE_PATH }}
