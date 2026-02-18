@@ -5,6 +5,15 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+# Secrets necessários:
+#   FTP_SERVER   → ftp.abdoncordeirodeliman1769452774835.1202135.meusitehostgator.com.br
+#   FTP_USERNAME → deploy@iagus.com.br
+#   FTP_PASSWORD → senha do usuário deploy
+#   SSH_HOST     → 69.6.249.117
+#   SSH_USERNAME → abdonc73
+#   SSH_PASSWORD → senha principal do cPanel
+#   REMOTE_PATH  → /home1/abdonc73/iagus.com.br
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -24,26 +33,32 @@ jobs:
         npm ci
         npm run build
 
-    - name: 📂 Deploy via SFTP (porta 2222 - HostGator)
-      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+    - name: 📂 Deploy via FTP (porta 21)
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        username: ${{ secrets.FTP_USERNAME }}
         server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        port: 2222
-        local_path: './*'
-        remote_path: ${{ secrets.REMOTE_PATH }}
-        sftp_only: true
-        delete_remote_files: false
-        args: '-o ConnectTimeout=30 -o StrictHostKeyChecking=no'
-        sftpargs: '--exclude=.git --exclude=node_modules --exclude=.env --exclude=storage/logs --exclude=storage/framework/cache --exclude=storage/framework/sessions --exclude=storage/framework/views'
+        port: 21
+        protocol: ftp
+        local-dir: ./
+        server-dir: /
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.env
+          **/storage/logs/**
+          **/storage/framework/cache/**
+          **/storage/framework/sessions/**
+          **/storage/framework/views/**
 
     - name: 🚀 Pós-deploy via SSH (composer, migrate, optimize)
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
         port: 2222
         script: |
           cd ${{ secrets.REMOTE_PATH }}
