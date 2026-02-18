@@ -1,10 +1,10 @@
 ---
 deployment:
   tasks:
-    # vendor/ e public/build/ já vêm no repo - sem necessidade de composer ou npm
-    - /bin/cp -R /home1/abdonc73/repositories/iagus/. /home1/abdonc73/iagus.com.br/
+    # rsync: copia só arquivos alterados (muito mais rápido que cp), preserva .env no destino
+    - /usr/bin/rsync -a --exclude='.git' --exclude='.env' --exclude='node_modules' --exclude='storage/logs' --exclude='storage/framework/sessions' --exclude='storage/framework/cache' --exclude='storage/framework/views' /home1/abdonc73/repositories/iagus/ /home1/abdonc73/iagus.com.br/
 
-    # Artisan (cada linha é um shell separado - usar caminho completo)
+    # Artisan
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan optimize:clear
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan migrate --force
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan optimize
