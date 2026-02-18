@@ -23,11 +23,10 @@ echo '<pre style="font-family:monospace;background:#1a1a1a;color:#00ff00;padding
 echo "=== SETUP IAGUS ===\n\n";
 
 $commands = [
-    ['optimize:clear', []],
-    ['migrate',        ['--force' => true]],
-    ['db:seed',        ['--force' => true]],
-    ['storage:link',   ['--relative' => true]],
-    ['optimize',       []],
+    ['optimize:clear',   []],
+    ['migrate:fresh',    ['--force' => true, '--seed' => true]],
+    ['storage:link',     []],
+    ['optimize',         []],
 ];
 
 foreach ($commands as [$cmd, $args]) {
