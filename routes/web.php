@@ -109,3 +109,32 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('ad
     Route::get('/inscricoes/{registration}', [AdminRegistrationController::class, 'show'])->name('registrations.show');
     Route::post('/inscricoes/{registration}/cancelar', [AdminRegistrationController::class, 'cancel'])->name('registrations.cancel');
 });
+
+// ROTA TEMPORÁRIA DE SETUP - DELETE APÓS USO
+// Acesse: /setup-iagus-2026?token=IAGUS_SETUP_KEY
+Route::get('/setup-iagus-2026', function (\Illuminate\Http\Request $request) {
+    if ($request->query('token') !== 'IAGUS_SETUP_KEY') {
+        abort(403);
+    }
+    $output = '<pre style="background:#111;color:#0f0;padding:20px;font-family:monospace;">';
+    $output .= "=== SETUP IAGUS ===\n\n";
+    $kernel = app(\Illuminate\Contracts\Console\Kernel::class);
+    foreach (['migrate --force', 'optimize:clear', 'optimize', 'storage:link --relative'] as $cmd) {
+        $output .= "▶ php artisan $cmd\n";
+        try {
+            $parts = explode(' ', $cmd);
+            $command = array_shift($parts);
+            $args = [];
+            foreach ($parts as $p) { if (str_starts_with($p, '--')) $args[ltrim($p,'--')] = true; }
+            $kernel->call($command, $args);
+            $output .= $kernel->output() . "✅ OK\n\n";
+        } catch (\Exception $e) {
+            $output .= "❌ " . $e->getMessage() . "\n\n";
+        }
+    }
+    @chmod(storage_path(), 0775);
+    @chmod(base_path('bootstrap/cache'), 0775);
+    $output .= "✅ chmod storage e bootstrap/cache\n\n";
+    $output .= "=== CONCLUÍDO ===\n⚠️ DELETE ESTA ROTA DO web.php AGORA!\n</pre>";
+    return $output;
+});
