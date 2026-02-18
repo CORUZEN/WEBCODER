@@ -1,15 +1,20 @@
 ---
 deployment:
   tasks:
-    # rsync: copia só arquivos alterados (muito mais rápido que cp), preserva .env no destino
+    # rsync: copia só arquivos alterados, preserva .env no destino
     - /usr/bin/rsync -a --exclude='.git' --exclude='.env' --exclude='node_modules' --exclude='storage/logs' --exclude='storage/framework/sessions' --exclude='storage/framework/cache' --exclude='storage/framework/views' /home1/abdonc73/repositories/iagus/ /home1/abdonc73/iagus.com.br/
+
+    # Corrigir permissões: diretórios 755, arquivos 644
+    - find /home1/abdonc73/iagus.com.br -type d -exec chmod 755 {} \;
+    - find /home1/abdonc73/iagus.com.br -type f -exec chmod 644 {} \;
+
+    # Artisan executável e storage gravável
+    - chmod 755 /home1/abdonc73/iagus.com.br/artisan
+    - chmod -R 775 /home1/abdonc73/iagus.com.br/storage
+    - chmod -R 775 /home1/abdonc73/iagus.com.br/bootstrap/cache
 
     # Artisan
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan optimize:clear
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan migrate --force
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan optimize
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan storage:link --relative
-
-    # Permissões
-    - chmod -R 775 /home1/abdonc73/iagus.com.br/storage
-    - chmod -R 775 /home1/abdonc73/iagus.com.br/bootstrap/cache
