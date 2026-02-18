@@ -30,18 +30,24 @@ jobs:
         npm ci
         npm run build
 
-    - name: 📂 Deploy via SFTP (porta 2222)
-      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        port: 2222
-        local_path: './*'
-        remote_path: ${{ secrets.REMOTE_PATH }}
-        sftp_only: true
-        delete_remote_files: false
-        args: '-o ConnectTimeout=30 -o StrictHostKeyChecking=no'
+    - name: 📂 Deploy via SFTP com lftp (porta 2222)
+      run: |
+        sudo apt-get install -y lftp
+        lftp -u "${{ secrets.FTP_USERNAME }}","${{ secrets.FTP_PASSWORD }}" sftp://${{ secrets.FTP_SERVER }}:2222 <<'LFTP'
+        set sftp:auto-confirm yes
+        set net:timeout 30
+        set net:max-retries 3
+        mirror --reverse --verbose \
+          --exclude-glob .git/ \
+          --exclude-glob .github/ \
+          --exclude-glob node_modules/ \
+          --exclude-glob .env \
+          --exclude-glob storage/logs/ \
+          --exclude-glob storage/framework/cache/ \
+          --exclude-glob storage/framework/sessions/ \
+          --exclude-glob storage/framework/views/ \
+          ./ ${{ secrets.REMOTE_PATH }}/
+        LFTP
 
     - name: 🚀 Pós-deploy via SSH (composer, migrate, optimize)
       uses: appleboy/ssh-action@v1.0.3
@@ -52,6 +58,8 @@ jobs:
         port: 2222
         script: |
           cd ${{ secrets.REMOTE_PATH }}
+          rm -rf .git .github node_modules
+          [ -f .env ] || cp .env-HOSTGATOR .env
           /usr/local/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
           /usr/local/bin/php artisan migrate --force
           /usr/local/bin/php artisan optimize:clear
