@@ -1,28 +1,20 @@
 ---
 deployment:
   tasks:
-    # 1. Definir caminho de deploy
-    - export DEPLOYPATH=/home1/abdonc73/iagus.com.br
+    # NOTA: vendor/ é enviado via FTP pelo GitHub Actions - não reinstalar aqui
 
-    # 2. Copiar todos os arquivos do repo para o DEPLOYPATH
-    - /bin/cp -R . $DEPLOYPATH
+    # 1. Limpar caches antigos
+    - cd /home1/abdonc73/iagus.com.br && /usr/local/bin/php artisan optimize:clear 2>&1
 
-    # 3. Limpar vendor antigo e reinstalar dependências PHP
-    - rm -rf $DEPLOYPATH/vendor
-    - cd $DEPLOYPATH && /usr/local/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction 2>&1
+    # 2. Rodar migrations
+    - cd /home1/abdonc73/iagus.com.br && /usr/local/bin/php artisan migrate --force 2>&1
 
-    # 4. Limpar caches antigos
-    - cd $DEPLOYPATH && /usr/local/bin/php artisan optimize:clear 2>&1
+    # 3. Cache de produção
+    - cd /home1/abdonc73/iagus.com.br && /usr/local/bin/php artisan optimize 2>&1
 
-    # 5. Rodar migrations (--force para produção)
-    - cd $DEPLOYPATH && /usr/local/bin/php artisan migrate --force 2>&1
+    # 4. Criar symlink de storage
+    - cd /home1/abdonc73/iagus.com.br && /usr/local/bin/php artisan storage:link --relative 2>&1
 
-    # 6. Cache de produção (config, routes, views)
-    - cd $DEPLOYPATH && /usr/local/bin/php artisan optimize 2>&1
-
-    # 7. Criar symlink de storage (se não existir)
-    - cd $DEPLOYPATH && /usr/local/bin/php artisan storage:link --relative 2>&1
-
-    # 8. Permissões de escrita para storage e cache
-    - chmod -R 775 $DEPLOYPATH/storage
-    - chmod -R 775 $DEPLOYPATH/bootstrap/cache
+    # 5. Permissões
+    - chmod -R 775 /home1/abdonc73/iagus.com.br/storage
+    - chmod -R 775 /home1/abdonc73/iagus.com.br/bootstrap/cache

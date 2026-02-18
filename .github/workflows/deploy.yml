@@ -5,10 +5,11 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-# Secrets necessários (apenas 3):
+# Secrets necessários:
 #   FTP_SERVER   → sh00180.hostgator.com.br
 #   FTP_USERNAME → abdonc73
 #   FTP_PASSWORD → senha principal do cPanel
+#   REMOTE_PATH  → /home1/abdonc73/iagus.com.br
 
 jobs:
   deploy:
@@ -17,6 +18,15 @@ jobs:
     steps:
     - name: 🚚 Checkout code
       uses: actions/checkout@v4
+
+    - name: 🐘 Setup PHP 8.3
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, xml, ctype, json, tokenizer, pdo, pdo_mysql, curl, openssl, bcmath, zip
+
+    - name: 📦 Instalar dependências PHP (composer)
+      run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
     - name: 📦 Setup Node.js e compilar assets
       uses: actions/setup-node@v4
@@ -29,28 +39,36 @@ jobs:
         npm ci
         npm run build
 
-    - name: 📤 Commit assets compilados de volta ao repositório
-      run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
-        git add public/build/
-        git diff --staged --quiet || git commit -m "chore: compilar assets [skip ci]"
-        git push origin HEAD:main || true
+    - name: 📤 Enviar arquivos via FTP (incluindo vendor/)
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./
+        server-dir: ${{ secrets.REMOTE_PATH }}/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.env
+          **/.env-*
+          **/storage/logs/**
+          **/storage/framework/cache/**
+          **/storage/framework/sessions/**
+          **/storage/framework/views/**
 
-    - name: 🚀 Disparar deploy via API cPanel (pull + .cpanel.yml)
+    - name: ⚡ Rodar artisan via rota de setup
       env:
-        CPANEL_USER: ${{ secrets.FTP_USERNAME }}
-        CPANEL_PASS: ${{ secrets.FTP_PASSWORD }}
-        CPANEL_HOST: ${{ secrets.FTP_SERVER }}
+        SITE_URL: https://iagus.com.br
       run: |
-        echo "Solicitando pull + deploy ao cPanel..."
-        RESPONSE=$(curl -sk -u "$CPANEL_USER:$CPANEL_PASS" \
-          "https://$CPANEL_HOST:2083/execute/VersionControlDeployment/create?repository_root=/home1/$CPANEL_USER/repositories/iagus")
-        echo "Resposta: $RESPONSE"
-        # Verificar se houve erro
-        if echo "$RESPONSE" | grep -q '"status":0'; then
-          echo "❌ Erro no deploy cPanel"
-          echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); [print(e) for e in d.get('errors',[])]"
-          exit 1
+        echo "Aguardando servidor processar arquivos..."
+        sleep 10
+        echo "Rodando migrations e otimizações..."
+        RESP=$(curl -sk --max-time 120 "$SITE_URL/setup-iagus-2026?token=IAGUS_SETUP_KEY")
+        echo "$RESP"
+        if echo "$RESP" | grep -qi "sucesso\|success\|completed\|migrate"; then
+          echo "✅ Setup concluído!"
+        else
+          echo "⚠️ Verifique manualmente: $SITE_URL/setup-iagus-2026?token=IAGUS_SETUP_KEY"
         fi
-        echo "✅ Deploy disparado com sucesso!"
