@@ -18,17 +18,42 @@ jobs:
     steps:
     - name: 🚚 Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
+    # Detectar se composer.json ou composer.lock mudaram neste commit
+    - name: 🔍 Verificar se dependências PHP mudaram
+      id: composer_changed
+      run: |
+        if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -qE 'composer\.(json|lock)'; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "⚠️  composer.json/lock mudaram - vendor/ será reinstalado"
+        else
+          echo "changed=false" >> $GITHUB_OUTPUT
+          echo "✅ composer.json/lock sem mudanças - vendor/ será reutilizado do cache"
+        fi
 
     - name: 🐘 Setup PHP 8.3
+      if: steps.composer_changed.outputs.changed == 'true'
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.3'
         extensions: mbstring, xml, ctype, json, tokenizer, pdo, pdo_mysql, curl, openssl, bcmath, zip
 
-    - name: 📦 Instalar dependências PHP (composer)
+    # Cache do vendor/ — só rebuilda quando composer.lock muda
+    - name: 💾 Cache do vendor/
+      id: composer_cache
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: composer-${{ hashFiles('composer.lock') }}
+        restore-keys: composer-
+
+    - name: 📦 Instalar dependências PHP (apenas se necessário)
+      if: steps.composer_cache.outputs.cache-hit != 'true'
       run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
-    - name: 📦 Setup Node.js e compilar assets
+    - name: 📦 Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
@@ -39,7 +64,10 @@ jobs:
         npm ci
         npm run build
 
-    - name: 📤 Enviar arquivos via FTP (incluindo vendor/)
+    # Deploy incremental: o FTP-Deploy-Action salva estado no servidor
+    # e só reenvia arquivos que mudaram (via hash). vendor/ só muda
+    # quando composer.lock muda, então fica em cache naturalmente.
+    - name: 📤 Deploy incremental via FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -47,6 +75,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./
         server-dir: ${{ secrets.REMOTE_PATH }}/
+        state-name: .ftp-deploy-sync-state.json
         exclude: |
           **/.git*
           **/.git*/**
@@ -64,11 +93,10 @@ jobs:
       run: |
         echo "Aguardando servidor processar arquivos..."
         sleep 10
-        echo "Rodando migrations e otimizações..."
         RESP=$(curl -sk --max-time 120 "$SITE_URL/setup-iagus-2026?token=IAGUS_SETUP_KEY")
         echo "$RESP"
         if echo "$RESP" | grep -qi "sucesso\|success\|completed\|migrate"; then
           echo "✅ Setup concluído!"
         else
-          echo "⚠️ Verifique manualmente: $SITE_URL/setup-iagus-2026?token=IAGUS_SETUP_KEY"
+          echo "⚠️ Verifique: $SITE_URL/setup-iagus-2026?token=IAGUS_SETUP_KEY"
         fi
