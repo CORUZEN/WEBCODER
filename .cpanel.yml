@@ -1,21 +1,15 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home1/abdonc73/iagus.com.br
+    # vendor/ e public/build/ já vêm no repo - sem necessidade de composer ou npm
+    - /bin/cp -R /home1/abdonc73/repositories/iagus/. /home1/abdonc73/iagus.com.br/
 
-    # vendor/ e public/build/ já vêm no repo — sem necessidade de composer ou npm
-    - /bin/cp -R . $DEPLOYPATH
-
-    # Localizar PHP
-    - export PHP=/opt/cpanel/ea-php83/root/usr/bin/php
-    - if [ ! -f "$PHP" ]; then export PHP=$(which php); fi
-
-    # Artisan
-    - cd $DEPLOYPATH && $PHP artisan optimize:clear 2>&1
-    - cd $DEPLOYPATH && $PHP artisan migrate --force 2>&1
-    - cd $DEPLOYPATH && $PHP artisan optimize 2>&1
-    - cd $DEPLOYPATH && $PHP artisan storage:link --relative 2>&1
+    # Artisan (cada linha é um shell separado - usar caminho completo)
+    - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan optimize:clear
+    - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan migrate --force
+    - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan optimize
+    - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan storage:link --relative
 
     # Permissões
-    - chmod -R 775 $DEPLOYPATH/storage
-    - chmod -R 775 $DEPLOYPATH/bootstrap/cache
+    - chmod -R 775 /home1/abdonc73/iagus.com.br/storage
+    - chmod -R 775 /home1/abdonc73/iagus.com.br/bootstrap/cache
