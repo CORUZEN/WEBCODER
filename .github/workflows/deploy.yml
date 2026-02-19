@@ -63,8 +63,8 @@ jobs:
         CPANEL_PASS: ${{ secrets.FTP_PASSWORD }}
         CPANEL_HOST: ${{ secrets.FTP_SERVER }}
       run: |
-        # Repo clonado direto no diretório do site
-        REPO_ROOT="/home1/$CPANEL_USER/iagus.com.br"
+        # Repo fica em repositories/iagus, .cpanel.yml faz rsync para iagus.com.br
+        REPO_ROOT="/home1/$CPANEL_USER/repositories/iagus"
 
         echo "1️⃣  Atualizar do remoto (git pull)..."
         PULL=$(curl -sk -u "$CPANEL_USER:$CPANEL_PASS" \

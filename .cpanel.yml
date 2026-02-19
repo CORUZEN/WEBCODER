@@ -1,9 +1,10 @@
 ---
 deployment:
   tasks:
-    # Repo está direto em iagus.com.br/ - não precisa rsync
+    # Sincronizar repo -> site (apenas arquivos necessarios, exclui docs/dev)
+    - /usr/bin/rsync -a --delete --exclude='.git' --exclude='.env' --exclude='node_modules' --exclude='.github' --exclude='*.md' --exclude='*.MD' --exclude='docs/' --exclude='tests/' --exclude='Dockerfile' --exclude='docker-compose.yml' --exclude='*.bat' --exclude='*.sh' --exclude='*.ps1' --exclude='phpunit.xml' --exclude='phpinfo.php' --exclude='diagnostico.php' --exclude='test-laravel.php' --exclude='teste-conexao.php' --exclude='ver-log.php' --exclude='verificar-arquivos.php' --exclude='limpar-cache.php' --exclude='setup-database.php' --exclude='setup-run.php' --exclude='install.php' --exclude='install-final.php' --exclude='index-redirect.php' --exclude='.htaccess-*' --exclude='.htaccess-BACKUP' --exclude='postcss.config.js' --exclude='tailwind.config.js' --exclude='vite.config.js' --exclude='package.json' --exclude='deploy.php' --exclude='check.php' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/data/*' --exclude='storage/framework/views/*' /home1/abdonc73/repositories/iagus/ /home1/abdonc73/iagus.com.br/
 
-    # Garantir que diretórios de storage existem
+    # Garantir que diretorios de storage existem
     - mkdir -p /home1/abdonc73/iagus.com.br/storage/framework/sessions
     - mkdir -p /home1/abdonc73/iagus.com.br/storage/framework/views
     - mkdir -p /home1/abdonc73/iagus.com.br/storage/framework/cache/data
@@ -11,7 +12,7 @@ deployment:
     - mkdir -p /home1/abdonc73/iagus.com.br/storage/app/public
     - mkdir -p /home1/abdonc73/iagus.com.br/bootstrap/cache
 
-    # Permissões corretas
+    # Permissoes corretas
     - chmod 755 /home1/abdonc73/iagus.com.br/artisan
     - chmod -R 775 /home1/abdonc73/iagus.com.br/storage
     - chmod -R 775 /home1/abdonc73/iagus.com.br/bootstrap/cache
