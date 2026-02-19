@@ -1,8 +1,8 @@
 ---
 deployment:
   tasks:
-    # Sincronizar repo -> site (apenas arquivos necessarios, exclui docs/dev)
-    - /usr/bin/rsync -a --delete --exclude='.git' --exclude='.env' --exclude='node_modules' --exclude='.github' --exclude='*.md' --exclude='*.MD' --exclude='docs/' --exclude='tests/' --exclude='Dockerfile' --exclude='docker-compose.yml' --exclude='*.bat' --exclude='*.sh' --exclude='*.ps1' --exclude='phpunit.xml' --exclude='phpinfo.php' --exclude='diagnostico.php' --exclude='diagnostico-servidor.php' --exclude='fix-servidor.php' --exclude='test-laravel.php' --exclude='teste-conexao.php' --exclude='ver-log.php' --exclude='verificar-arquivos.php' --exclude='limpar-cache.php' --exclude='setup-database.php' --exclude='setup-run.php' --exclude='install.php' --exclude='install-final.php' --exclude='index-redirect.php' --exclude='.htaccess-*' --exclude='postcss.config.js' --exclude='tailwind.config.js' --exclude='vite.config.js' --exclude='package.json' --exclude='package-lock.json' --exclude='deploy.php' --exclude='check.php' --exclude='server.log' --exclude='.dockerignore' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/data/*' --exclude='storage/framework/views/*' /home1/abdonc73/repositories/IAGUS/ /home1/abdonc73/iagus.com.br/
+    # Descobrir o path correto do repo (iagus ou IAGUS)
+    - REPO=$( [ -d /home1/abdonc73/repositories/IAGUS ] && echo /home1/abdonc73/repositories/IAGUS || echo /home1/abdonc73/repositories/iagus ) && /usr/bin/rsync -a --delete --exclude='.git' --exclude='.env' --exclude='node_modules' --exclude='.github' --exclude='*.md' --exclude='*.MD' --exclude='docs/' --exclude='tests/' --exclude='Dockerfile' --exclude='docker-compose.yml' --exclude='*.bat' --exclude='*.sh' --exclude='*.ps1' --exclude='phpunit.xml' --exclude='phpinfo.php' --exclude='diagnostico.php' --exclude='diagnostico-servidor.php' --exclude='fix-servidor.php' --exclude='test-laravel.php' --exclude='teste-conexao.php' --exclude='ver-log.php' --exclude='verificar-arquivos.php' --exclude='limpar-cache.php' --exclude='setup-database.php' --exclude='setup-run.php' --exclude='install.php' --exclude='install-final.php' --exclude='index-redirect.php' --exclude='.htaccess-*' --exclude='postcss.config.js' --exclude='tailwind.config.js' --exclude='vite.config.js' --exclude='package.json' --exclude='package-lock.json' --exclude='deploy.php' --exclude='check.php' --exclude='server.log' --exclude='.dockerignore' --exclude='storage/logs/*' --exclude='storage/framework/sessions/*' --exclude='storage/framework/cache/data/*' --exclude='storage/framework/views/*' $REPO/ /home1/abdonc73/iagus.com.br/
 
     # Garantir que diretorios de storage existem
     - mkdir -p /home1/abdonc73/iagus.com.br/storage/framework/sessions
@@ -12,7 +12,9 @@ deployment:
     - mkdir -p /home1/abdonc73/iagus.com.br/storage/app/public
     - mkdir -p /home1/abdonc73/iagus.com.br/bootstrap/cache
 
-    # Permissoes corretas
+    # Permissoes corretas - IMPORTANTE: iagus.com.br e public precisam ser 755
+    - chmod 755 /home1/abdonc73/iagus.com.br
+    - chmod 755 /home1/abdonc73/iagus.com.br/public
     - chmod 755 /home1/abdonc73/iagus.com.br/artisan
     - chmod -R 775 /home1/abdonc73/iagus.com.br/storage
     - chmod -R 775 /home1/abdonc73/iagus.com.br/bootstrap/cache

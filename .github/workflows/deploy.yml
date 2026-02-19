@@ -63,13 +63,20 @@ jobs:
         CPANEL_PASS: ${{ secrets.FTP_PASSWORD }}
         CPANEL_HOST: ${{ secrets.FTP_SERVER }}
       run: |
-        # Repo fica em repositories/IAGUS, .cpanel.yml faz rsync para iagus.com.br
-        REPO_ROOT="/home1/$CPANEL_USER/repositories/IAGUS"
+        # Tentar ambos os paths (iagus ou IAGUS) - depende de como o cPanel criou
+        for REPO_NAME in IAGUS iagus; do
+          REPO_ROOT="/home1/$CPANEL_USER/repositories/$REPO_NAME"
 
-        echo "1️⃣  Atualizar do remoto (git pull)..."
-        PULL=$(curl -sk -u "$CPANEL_USER:$CPANEL_PASS" \
-          "https://$CPANEL_HOST:2083/execute/VersionControl/update?repository_root=$REPO_ROOT")
-        echo "Pull: $PULL"
+          echo "1️⃣  Tentando pull em $REPO_ROOT..."
+          PULL=$(curl -sk -u "$CPANEL_USER:$CPANEL_PASS" \
+            "https://$CPANEL_HOST:2083/execute/VersionControl/update?repository_root=$REPO_ROOT")
+          echo "Pull: $PULL"
+
+          if echo "$PULL" | grep -q '"errors":null'; then
+            echo "✅ Pull OK em $REPO_ROOT"
+            break
+          fi
+        done
 
         echo "Aguardando 5s para o pull completar..."
         sleep 5
