@@ -11,9 +11,7 @@ deployment:
     - mkdir -p /home1/abdonc73/iagus.com.br/storage/logs
     - mkdir -p /home1/abdonc73/iagus.com.br/bootstrap/cache
 
-    # Permissões corretas
-    - find /home1/abdonc73/iagus.com.br -type d -exec chmod 755 {} \;
-    - find /home1/abdonc73/iagus.com.br -type f -exec chmod 644 {} \;
+    # Permissões corretas (apenas storage e cache, sem find recursivo lento)
     - chmod 755 /home1/abdonc73/iagus.com.br/artisan
     - chmod -R 775 /home1/abdonc73/iagus.com.br/storage
     - chmod -R 775 /home1/abdonc73/iagus.com.br/bootstrap/cache
@@ -21,5 +19,5 @@ deployment:
     # Laravel artisan (PHP 8.3 HostGator)
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan optimize:clear
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan migrate --force
-    - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan storage:link --relative
+    - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan storage:link
     - /opt/cpanel/ea-php83/root/usr/bin/php /home1/abdonc73/iagus.com.br/artisan optimize

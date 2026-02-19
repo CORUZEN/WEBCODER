@@ -63,13 +63,24 @@ jobs:
         CPANEL_PASS: ${{ secrets.FTP_PASSWORD }}
         CPANEL_HOST: ${{ secrets.FTP_SERVER }}
       run: |
-        echo "Disparando deploy no cPanel..."
-        RESPONSE=$(curl -sk -u "$CPANEL_USER:$CPANEL_PASS" \
-          "https://$CPANEL_HOST:2083/execute/VersionControlDeployment/create?repository_root=/home1/$CPANEL_USER/repositories/iagus")
-        echo "Resposta: $RESPONSE"
-        if echo "$RESPONSE" | grep -q '"status":0'; then
+        REPO_ROOT="/home1/$CPANEL_USER/repositories/iagus"
+
+        echo "1️⃣  Atualizar do remoto (git pull)..."
+        PULL=$(curl -sk -u "$CPANEL_USER:$CPANEL_PASS" \
+          "https://$CPANEL_HOST:2083/execute/VersionControl/update?repository_root=$REPO_ROOT")
+        echo "Pull: $PULL"
+
+        echo "Aguardando 5s para o pull completar..."
+        sleep 5
+
+        echo "2️⃣  Implementar HEAD (.cpanel.yml tasks)..."
+        DEPLOY=$(curl -sk -u "$CPANEL_USER:$CPANEL_PASS" \
+          "https://$CPANEL_HOST:2083/execute/VersionControlDeployment/create?repository_root=$REPO_ROOT")
+        echo "Deploy: $DEPLOY"
+
+        if echo "$DEPLOY" | grep -q '"status":0'; then
           echo "❌ Erro no deploy cPanel"
           exit 1
         fi
-        echo "✅ Deploy disparado — cPanel irá puxar repo (com vendor/) e rodar artisan"
+        echo "✅ Deploy completo — cPanel puxou repo e rodou artisan automaticamente"
 
