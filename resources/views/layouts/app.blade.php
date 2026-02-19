@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="@yield('html_class', '')">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,11 +15,11 @@
     
     @stack('styles')
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="@yield('body_class', 'min-h-screen') flex flex-col">
     
     @include('layouts.navbar')
     
-    <main class="flex-grow">
+    <main class="flex-grow flex flex-col @yield('main_class', '')">
         @if(session('success'))
             <div class="alert alert-success max-w-7xl mx-auto mt-4 px-4">
                 {{ session('success') }}
@@ -41,7 +41,9 @@
         @yield('content')
     </main>
     
+    @unless(View::hasSection('hide_footer'))
     @include('layouts.footer')
+    @endunless
     
     @stack('scripts')
 </body>
